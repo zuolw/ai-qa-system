@@ -1,0 +1,23 @@
+server:
+  port: 8080 # 所有后端请求的入口
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+    gateway:
+      discovery:
+        locator:
+          enabled: true # 开启基于服务发现的路由功能
+          lower-case-service-id: true
+      routes:
+        - id: user_service_route
+          uri: lb://user-service # lb:// 表示从Nacos负载均衡地选择一个user-service实例
+          predicates:
+            - Path=/api/user/** # 匹配所有/api/user/开头的请求
+        - id: qa_service_route
+          uri: lb://qa-service
+          predicates:
+            - Path=/api/qa/**

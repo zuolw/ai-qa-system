@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  nacos:
+    image: nacos/nacos-server:latest
+    container_name: nacos-standalone
+    environment:
+      - PREFER_HOST_MODE=hostname
+      - MODE=standalone # 使用单机模式进行开发
+    ports:
+      - "8848:8848" # Nacos控制台端口
+      - "9848:9848" # Nacos gRPC端口
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root  # 设置root用户密码
+      MYSQL_DATABASE: ai_qa_system # 启动时创建的数据库
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:
