@@ -2,7 +2,7 @@ server:
   port: 8081
 spring:
   application:
-    name: user-service-1
+    name: user-service
   cloud:
     nacos:
       discovery:
