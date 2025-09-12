@@ -5,8 +5,12 @@ spring:
     name: qa-service
   cloud:
     nacos:
-      discovery:
-        server-addr: 54.219.180.170:8848
-      config:
-        server-addr: 54.219.180.170:8848
-        file-extension: yml # 指定配置文件格式
+      server-addr: 54.219.180.170:8848
+    loadbalancer:
+      ribbon:
+        enabled: false
+logging:
+  level:
+    # 将你的FeignClient接口所在的包路径设置为DEBUG
+    # 假设 UserClient 在 com.ai.qa.qaservice.feign 包下
+    com.ai.qa.qaservice.feign: DEBUG

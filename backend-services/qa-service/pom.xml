@@ -14,7 +14,9 @@
 
     <!-- 2. 定义自己的artifactId -->
     <artifactId>qa-service</artifactId>
-
+    <properties>
+        <spring-cloud.loadbalancer.ribbon.enabled>false</spring-cloud.loadbalancer.ribbon.enabled>
+    </properties>
     <dependencies>
         <!-- 作为Web服务的基础 -->
         <dependency>
@@ -30,6 +32,10 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
         <!-- Lombok工具 -->
         <dependency>

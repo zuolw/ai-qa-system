@@ -24,4 +24,10 @@ public class UserController {
         System.out.println("测试login");
         return new AuthResponse("token");
     }
+
+    @GetMapping("/{userId}")
+    public String getUserById(@PathVariable("userId") Long userId) {
+        System.out.println("测试userid");
+        return "userid:"+userId;
+    }
 }
