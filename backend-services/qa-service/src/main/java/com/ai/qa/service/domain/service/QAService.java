@@ -15,6 +15,7 @@ public class QAService {
         System.out.println("Fetching user info for userId: " + userId);
         String user;
         try {
+
             // 就像调用一个本地方法一样！
             user = userClient.getUserById(userId);
         } catch (Exception e) {

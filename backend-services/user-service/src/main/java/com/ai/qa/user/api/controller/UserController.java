@@ -25,6 +25,12 @@ public class UserController {
         return new AuthResponse("token");
     }
 
+    @PostMapping("/register")
+    public AuthResponse register(@RequestBody AuthRequest request) {
+        System.out.println("测试register");
+        return new AuthResponse("register");
+    }
+
     @GetMapping("/{userId}")
     public String getUserById(@PathVariable("userId") Long userId) {
         System.out.println("测试userid");

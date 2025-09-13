@@ -6,9 +6,6 @@ spring:
   cloud:
     nacos:
       server-addr: 54.219.180.170:8848
-    loadbalancer:
-      ribbon:
-        enabled: false
 logging:
   level:
     # 将你的FeignClient接口所在的包路径设置为DEBUG
