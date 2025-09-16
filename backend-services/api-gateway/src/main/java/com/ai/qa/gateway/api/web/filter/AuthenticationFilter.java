@@ -15,8 +15,8 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
-//@Component
-//@RefreshScope // 为了动态刷新JWT密钥
+@Component
+@RefreshScope // 为了动态刷新JWT密钥
 public class AuthenticationFilter implements GlobalFilter, Ordered {
 
     @Value("${jwt.secret}")

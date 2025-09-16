@@ -5,8 +5,6 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-
-
 public class QAHistory {
 
     private String id;
@@ -16,9 +14,9 @@ public class QAHistory {
     private LocalDateTime timestamp;
     private String sessionId;
 
-    private Object rag;
+    private QARAG rag;
 
-    public String getId(){
+    public String getId() {
         return this.id;
     }
 
@@ -29,26 +27,58 @@ public class QAHistory {
      */
     public String getAnswer(String question) {
         String response = rag.getContext();
-        return answer+response;
+        return answer + response;
     }
 
-    private QAHistory(String id){
-
-    }
-
-    public String getUserId(){
+    private QAHistory(String id) {
 
     }
 
-    public String getRAGAnswer(){
-
-        getAnswer();
-        serivice.sss();
-        return  "";
+    // Constructor for persistence layer
+    public QAHistory(String id, String userId, String question, String answer, LocalDateTime timestamp,
+            String sessionId) {
+        this.id = id;
+        this.userId = userId;
+        this.question = question;
+        this.answer = answer;
+        this.timestamp = timestamp;
+        this.sessionId = sessionId;
     }
-    public static QAHistory createNew(String userId, String question, String answer,...){
 
+    public String getUserId() {
+        return this.userId;
+    }
 
-        return new QAHistory();
+    public String getQuestion() {
+        return this.question;
+    }
+
+    public String getAnswer() {
+        return this.answer;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return this.timestamp;
+    }
+
+    public String getSessionId() {
+        return this.sessionId;
+    }
+
+    public String getRAGAnswer() {
+        // 修复：调用getAnswer方法时需要传入question参数
+        String baseAnswer = getAnswer(question);
+        // 修复：移除未定义的serivice调用
+        return baseAnswer;
+    }
+
+    public static QAHistory createNew(String userId, String question, String answer, String sessionId) {
+        QAHistory qaHistory = new QAHistory(java.util.UUID.randomUUID().toString());
+        qaHistory.userId = userId;
+        qaHistory.question = question;
+        qaHistory.answer = answer;
+        qaHistory.sessionId = sessionId;
+        qaHistory.timestamp = LocalDateTime.now();
+        return qaHistory;
     }
 }

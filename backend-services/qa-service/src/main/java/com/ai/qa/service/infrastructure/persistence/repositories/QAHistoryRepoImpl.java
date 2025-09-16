@@ -2,6 +2,7 @@ package com.ai.qa.service.infrastructure.persistence.repositories;
 
 import com.ai.qa.service.domain.model.QAHistory;
 import com.ai.qa.service.domain.repo.QAHistoryRepo;
+import com.ai.qa.service.infrastructure.persistence.entities.QAHistoryPO;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -12,24 +13,23 @@ public class QAHistoryRepoImpl implements QAHistoryRepo {
 
     private final JpaQAHistoryRepository jpaQAHistoryRepository;
 
-    private Mapper mapper;
+    private final Mapper mapper = new Mapper();
 
     @Override
     public void save(QAHistory history) {
         QAHistoryPO qaHistoryPO = mapper.toPO(history);
-        jpaQAHistoryRepository.save(jpaQAHistoryRepository);
+        jpaQAHistoryRepository.save(qaHistoryPO);
     }
 
     @Override
     public Optional<QAHistory> findHistoryById(String id) {
-        //ddd
-        QAHistoryPO qaHistoryPO = jpaQAHistoryRepository.findHistoryById(id);
-        return mapper.toDomain(qaHistoryPO);
+        QAHistoryPO qaHistoryPO = jpaQAHistoryRepository.findById(id).orElse(null);
+        return Optional.ofNullable(mapper.toDomain(qaHistoryPO));
     }
 
     @Override
     public List<QAHistory> findHistoryBySession(String sessionId) {
-        //ddd
-        return null;
+        List<QAHistoryPO> poList = jpaQAHistoryRepository.findBySessionId(sessionId);
+        return poList.stream().map(mapper::toDomain).toList();
     }
 }
