@@ -4,9 +4,9 @@ import { useChat } from 'ai/react';
 
 export default function ChatInterface() {
   const { messages, input, handleInputChange, handleSubmit } = useChat();
-  
+
   return (
-    <div className="flex flex-col h-[680px]">
+    <div className="flex flex-col min-h-[60vh] h-full">
       <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-white/5 rounded-2xl border border-white/10">
         {messages.length === 0 ? (
           <div className="text-center text-white/60 mt-10">
@@ -41,7 +41,7 @@ export default function ChatInterface() {
             value={input}
             onChange={handleInputChange}
             placeholder="输入您的问题..."
-            className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/15 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+            className="w-full px-4 py-3 rounded-xl bg-white text-gray-900 placeholder-gray-500 border border-white/20 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
           />
         </div>
         <button
