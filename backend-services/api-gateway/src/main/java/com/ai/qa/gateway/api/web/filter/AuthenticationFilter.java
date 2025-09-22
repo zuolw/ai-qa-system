@@ -27,7 +27,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
 
         // 定义白名单路径，这些路径不需要JWT验证
-        List<String> whiteList = List.of("/api/user/register", "/api/user/login");
+        List<String> whiteList = List.of("/api/user/register", "/api/user/login", "/api/qa/test");
         if (whiteList.contains(request.getURI().getPath())) {
             return chain.filter(exchange); // 放行
         }
@@ -47,9 +47,15 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
                     .getBody();
 
             // 验证通过，可以将用户信息放入请求头，传递给下游服务
+            String subject = claims.getSubject();
+            String username = claims.get("username", String.class);
+            if (username == null || username.isBlank()) {
+                username = subject; // 兼容只在sub里存用户名的token
+            }
+
             ServerHttpRequest mutatedRequest = request.mutate()
-                    .header("X-User-Id", claims.getSubject())
-                    .header("X-User-Name", claims.get("username", String.class))
+                    .header("X-User-Id", subject)
+                    .header("X-User-Name", username)
                     .build();
             return chain.filter(exchange.mutate().request(mutatedRequest).build());
         } catch (Exception e) {

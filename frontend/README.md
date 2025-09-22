@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI-QA-System 项目说明（前端+BFF）
 
-## Getting Started
+本前端为 Next.js 14 应用，同时承担 BFF 职责：
+- 登录/注册 API：代理到后端网关 `/api/user/...`
+- 聊天 API：代理到后端网关 `/api/qa/ask` 并自动携带 JWT
 
-First, run the development server:
+## 快速开始
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+打开 `http://localhost:3000` 访问：
+- 首页：产品概览与引导
+- /login、/register：登录/注册（BFF 会将 token 写入 HttpOnly Cookie）
+- /chat：聊天（BFF 从 Cookie 取 token → 附加 Authorization → 调用网关）
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## BFF 路由
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `app/api/auth/[...slug]/route.ts`
+  - 代理到 `http://localhost:8080/api/user/<slug>`（登录/注册）
+  - 成功后将 `{ token }` 写入 HttpOnly Cookie（token）
 
-## Learn More
+- `app/api/chat/route.ts`
+  - 从 Cookie 读取 `token` 并设置 `Authorization: Bearer <token>`
+  - 代理到 `http://localhost:8080/api/qa/ask`，返回 QA 的回答
 
-To learn more about Next.js, take a look at the following resources:
+## UI 说明
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- 全站采用科技风玻璃拟态（glassmorphism）视觉：
+  - 全局网格渐变背景：`tech-bg`
+  - 玻璃卡片容器：`glass-card`
+  - 动画与交互细节：统一 Tailwind 风格
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+更多后端与整体架构说明请参阅仓库根目录 README（中文）。

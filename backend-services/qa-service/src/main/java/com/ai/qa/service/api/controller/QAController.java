@@ -1,7 +1,4 @@
 package com.ai.qa.service.api.controller;
-
-import com.ai.qa.service.api.dto.QAHistoryDTO;
-import com.ai.qa.service.application.dto.SaveHistoryCommand;
 import com.ai.qa.service.domain.service.QAService;
 import com.ai.qa.service.infrastructure.client.GeminiClient;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +18,7 @@ public class QAController {
 
     @GetMapping("/test")
     public String testFeign() {
-        System.out.println("测试feign");
-        return qaService.processQuestion(1L);
+        return "qa-service ok";
     }
 
     @PostMapping("/ask")

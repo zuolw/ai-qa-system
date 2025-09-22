@@ -1,8 +1,5 @@
 package com.ai.qa.service.domain.model;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.time.LocalDateTime;
 
 public class QAHistory {

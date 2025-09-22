@@ -8,7 +8,7 @@ interface AuthFormProps {
 }
 
 export default function AuthForm({ type }: AuthFormProps) {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [error, setError] = useState('');
@@ -28,7 +28,7 @@ export default function AuthForm({ type }: AuthFormProps) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(
-          type === 'login' ? { email, password } : { name, email, password }
+          type === 'login' ? { username, password } : { username: name || username, password }
         ),
       });
 
@@ -66,16 +66,16 @@ export default function AuthForm({ type }: AuthFormProps) {
       )}
       
       <div>
-        <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">
-          邮箱
+        <label htmlFor="username" className="block text-gray-700 text-sm font-bold mb-2">
+          用户名
         </label>
         <input
-          type="email"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          type="text"
+          id="username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="请输入您的邮箱"
+          placeholder="请输入您的用户名"
           required
         />
       </div>

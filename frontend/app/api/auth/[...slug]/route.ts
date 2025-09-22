@@ -13,25 +13,15 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
     });
 
     const data = await response.json();
-    
-    // 处理cookie（如果后端设置了认证cookie）
-    const cookies = response.headers.getSetCookie();
-    if (cookies && cookies.length > 0) {
-      return new Response(JSON.stringify(data), {
-        status: response.status,
-        headers: {
-          'Content-Type': 'application/json',
-          'Set-Cookie': cookies.join(', '),
-        },
-      });
+
+    // 后端返回 { token, status }，这里将token写入HttpOnly Cookie
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (response.ok && data?.token) {
+      const maxAge = 60 * 60 * 24; // 1 day
+      headers['Set-Cookie'] = `token=${data.token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}`;
     }
 
-    return new Response(JSON.stringify(data), {
-      status: response.status,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    return new Response(JSON.stringify(data), { status: response.status, headers });
   } catch (error) {
     return new Response(JSON.stringify({ error: '无法连接到后端服务' }), {
       status: 500,

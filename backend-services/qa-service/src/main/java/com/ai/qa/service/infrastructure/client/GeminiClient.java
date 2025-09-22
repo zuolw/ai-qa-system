@@ -2,6 +2,7 @@ package com.ai.qa.service.infrastructure.client;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -36,14 +37,14 @@ public class GeminiClient {
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(requestBody)
                 .retrieve()
-                .bodyToMono(Map.class)
+                .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
                 .map(response -> {
                     // 解析Gemini API响应，提取回答文本
-                    Map<String, Object> candidates = (Map<String, Object>) ((java.util.List) response.get("candidates"))
-                            .get(0);
-                    Map<String, Object> content = (Map<String, Object>) candidates.get("content");
-                    java.util.List parts = (java.util.List) content.get("parts");
-                    Map<String, Object> part = (Map<String, Object>) parts.get(0);
+                    java.util.List<Map<String, Object>> candidates = (java.util.List<Map<String, Object>>) response.get("candidates");
+                    Map<String, Object> firstCandidate = candidates.get(0);
+                    Map<String, Object> content = (Map<String, Object>) firstCandidate.get("content");
+                    java.util.List<Map<String, Object>> parts = (java.util.List<Map<String, Object>>) content.get("parts");
+                    Map<String, Object> part = parts.get(0);
                     return (String) part.get("text");
                 });
     }
