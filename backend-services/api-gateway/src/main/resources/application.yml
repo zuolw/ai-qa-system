@@ -38,9 +38,9 @@ spring:
             - Path=/api/qa/**
           # 不剥离前缀，保持 /api/qa/** 原样转发
       default-filters:
-        # 配置默认的限流过滤器
-        - name: RequestRateLimiter
-          args:
-            key-resolver: '#{@ipKeyResolver}'
+        # 暂时禁用限流以便测试
+        # - name: RequestRateLimiter
+        #   args:
+        #     key-resolver: '#{@ipKeyResolver}'
 jwt:
   secret: mySecretKeyForJWTTokenGenerationWhichIsLongEnoughToBeSecure12345678901234567890

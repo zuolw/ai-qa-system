@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.5</version> <!-- 建议使用一个稳定版本 -->
+        <version>3.1.11</version>
         <relativePath/>
     </parent>
 
@@ -56,4 +56,17 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <!-- 统一管理插件版本 -->
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring-boot.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>

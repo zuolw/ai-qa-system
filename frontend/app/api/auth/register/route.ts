@@ -1,8 +1,8 @@
 import { NextRequest } from 'next/server';
 
-export async function POST(req: NextRequest, { params }: { params: { slug: string[] } }) {
-  const backendUrl = `http://localhost:8080/api/user/${params.slug.join('/')}`;
-  
+export async function POST(req: NextRequest) {
+  const backendUrl = `http://localhost:8080/api/user/register`;
+
   try {
     const response = await fetch(backendUrl, {
       method: 'POST',

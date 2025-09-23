@@ -13,5 +13,10 @@ logging:
     com.ai.qa.qaservice.feign: DEBUG
 gemini:
   api:
-    key: ${GEMINI_API_KEY:your-api-key-here}
-    url: https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent
+    key: AIzaSyCd3KlzM6KvMBO5HaiUvpWeuDPcb9vCjx0
+    url: https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent
+deepseek:
+  api:
+    key: sk-aefb794808ad4b7a990a78c1314e7c89
+    url: https://api.deepseek.com/v1/chat/completions
+    model: deepseek-chat

@@ -10,7 +10,6 @@ interface AuthFormProps {
 export default function AuthForm({ type }: AuthFormProps) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -27,15 +26,20 @@ export default function AuthForm({ type }: AuthFormProps) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(
-          type === 'login' ? { username, password } : { username: name || username, password }
-        ),
+        body: JSON.stringify({ username, password }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        router.push('/chat');
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+        }
+        if (type === 'register') {
+          router.push('/login');
+        } else {
+          router.push('/chat');
+        }
       } else {
         setError(data.message || '认证失败');
       }
@@ -48,23 +52,6 @@ export default function AuthForm({ type }: AuthFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {type === 'register' && (
-        <div>
-          <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">
-            用户名
-          </label>
-          <input
-            type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="请输入您的用户名"
-            required
-          />
-        </div>
-      )}
-      
       <div>
         <label htmlFor="username" className="block text-gray-700 text-sm font-bold mb-2">
           用户名
