@@ -3,6 +3,7 @@ const nextConfig = {
   experimental: {
     appDir: true,
   },
+  output: 'standalone',
   // 如果需要代理其他API，可以在这里配置
   async rewrites() {
     return [

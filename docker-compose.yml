@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - api-gateway
+    networks:
+      - ai-qa-network
+
+  api-gateway:
+    build:
+      context: ./backend-services/api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - NACOS_SERVER_ADDR=nacos:8848
+    depends_on:
+      - user-service
+      - qa-service
+    networks:
+      - ai-qa-network
+
+  user-service:
+    build:
+      context: ./backend-services/user-service
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - NACOS_SERVER_ADDR=nacos:8848
+    networks:
+      - ai-qa-network
+
+  qa-service:
+    build:
+      context: ./backend-services/qa-service
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - NACOS_SERVER_ADDR=nacos:8848
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+    networks:
+      - ai-qa-network
+
+  nacos:
+    image: nacos/nacos-server:latest
+    ports:
+      - "8848:8848"
+    environment:
+      - MODE=standalone
+    networks:
+      - ai-qa-network
+
+networks:
+  ai-qa-network:
+    driver: bridge

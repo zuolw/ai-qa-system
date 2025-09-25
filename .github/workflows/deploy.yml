@@ -1,0 +1,92 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY_FRONTEND: ai-qa-frontend
+  ECR_REPOSITORY_USER_SERVICE: ai-qa-user-service
+  ECR_REPOSITORY_QA_SERVICE: ai-qa-qa-service
+  ECR_REPOSITORY_API_GATEWAY: ai-qa-api-gateway
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    # Build and push frontend
+    - name: Build and push frontend image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        cd frontend
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:$IMAGE_TAG
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:latest
+
+    # Build and push user-service
+    - name: Build and push user-service image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        cd backend-services/user-service
+        mvn clean package -DskipTests
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_USER_SERVICE:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_USER_SERVICE:$IMAGE_TAG
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY_USER_SERVICE:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY_USER_SERVICE:latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_USER_SERVICE:latest
+
+    # Build and push qa-service
+    - name: Build and push qa-service image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        cd backend-services/qa-service
+        mvn clean package -DskipTests
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_QA_SERVICE:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_QA_SERVICE:$IMAGE_TAG
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY_QA_SERVICE:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY_QA_SERVICE:latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_QA_SERVICE:latest
+
+    # Build and push api-gateway
+    - name: Build and push api-gateway image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        cd backend-services/api-gateway
+        mvn clean package -DskipTests
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_API_GATEWAY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_API_GATEWAY:$IMAGE_TAG
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY_API_GATEWAY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY_API_GATEWAY:latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_API_GATEWAY:latest
+
+    # Deploy to AWS (using AWS CLI or other deployment tools)
+    - name: Deploy to AWS
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      run: |
+        echo "Deployment commands would go here"
+        echo "For example: update ECS service, deploy to EKS, etc."
+        # aws ecs update-service --cluster your-cluster --service your-service --force-new-deployment
