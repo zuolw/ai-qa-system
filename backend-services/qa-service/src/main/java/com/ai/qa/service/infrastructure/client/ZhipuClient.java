@@ -17,29 +17,29 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-@Order(2)
-public class DeepSeekClient implements AIClient {
+@Order(1)
+public class ZhipuClient implements AIClient {
 
-    private static final Logger logger = LoggerFactory.getLogger(DeepSeekClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(ZhipuClient.class);
 
     private final WebClient webClient;
 
-    @Value("${deepseek.api.key}")
+    @Value("${zhipu.api.key}")
     private String apiKey;
 
-    @Value("${deepseek.api.url}")
+    @Value("${zhipu.api.url}")
     private String apiUrl;
 
-    @Value("${deepseek.api.model}")
+    @Value("${zhipu.api.model}")
     private String model;
 
-    public DeepSeekClient(WebClient.Builder webClientBuilder) {
+    public ZhipuClient(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder.build();
     }
 
     @Override
     public String getProviderName() {
-        return "DeepSeek";
+        return "Zhipu";
     }
 
     public Mono<String> askQuestion(String question) {
@@ -57,13 +57,13 @@ public class DeepSeekClient implements AIClient {
                 .retrieve()
                 .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
                         response -> {
-                            logger.error("DeepSeek API error: status={}, response={}", response.statusCode(),
+                            logger.error("Zhipu API error: status={}, response={}", response.statusCode(),
                                     response.bodyToMono(String.class));
                             if (response.statusCode().is4xxClientError()) {
                                 return response.bodyToMono(String.class)
-                                        .flatMap(body -> Mono.error(new RuntimeException("DeepSeek API请求错误: " + body)));
+                                        .flatMap(body -> Mono.error(new RuntimeException("Zhipu API请求错误: " + body)));
                             } else {
-                                return Mono.error(new RuntimeException("DeepSeek API服务不可用"));
+                                return Mono.error(new RuntimeException("Zhipu API服务不可用"));
                             }
                         })
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {
@@ -72,19 +72,23 @@ public class DeepSeekClient implements AIClient {
                         .filter(throwable -> throwable instanceof WebClientResponseException &&
                                 ((WebClientResponseException) throwable).getStatusCode().is5xxServerError()))
                 .map(this::extractAnswer)
-                .doOnError(error -> logger.error("Failed to get answer from DeepSeek API", error));
+                .doOnError(error -> logger.error("Failed to get answer from Zhipu API", error))
+                .onErrorResume(throwable -> {
+                    logger.warn("Zhipu API failed, providing fallback response for question: {}", question);
+                    return Mono.just(getFallbackAnswer(question));
+                });
     }
 
     private String extractAnswer(Map<String, Object> response) {
         try {
             if (response == null) {
-                throw new RuntimeException("Empty response from DeepSeek API");
+                throw new RuntimeException("Empty response from Zhipu API");
             }
 
             @SuppressWarnings("unchecked")
             List<Map<String, Object>> choices = (List<Map<String, Object>>) response.get("choices");
             if (choices == null || choices.isEmpty()) {
-                throw new RuntimeException("No choices in DeepSeek API response");
+                throw new RuntimeException("No choices in Zhipu API response");
             }
 
             Map<String, Object> firstChoice = choices.get(0);
@@ -105,8 +109,21 @@ public class DeepSeekClient implements AIClient {
 
             return content;
         } catch (Exception e) {
-            logger.error("Error parsing DeepSeek API response: {}", e.getMessage());
-            throw new RuntimeException("Failed to parse DeepSeek API response", e);
+            logger.error("Error parsing Zhipu API response: {}", e.getMessage());
+            throw new RuntimeException("Failed to parse Zhipu API response", e);
+        }
+    }
+
+    private String getFallbackAnswer(String question) {
+        // 提供简单的备用回答
+        if (question.toLowerCase().contains("hello") || question.toLowerCase().contains("hi")
+                || question.contains("你好")) {
+            return "你好！我目前正在经历一些技术困难，我的AI服务暂时无法正常工作。我可以为您提供基本信息帮助。";
+        } else if ((question.toLowerCase().contains("how") && question.toLowerCase().contains("you")) ||
+                (question.contains("你") && question.contains("谁"))) {
+            return "我是AI助手，但我目前连接主服务遇到问题。现在我可以提供基本回复。";
+        } else {
+            return "抱歉，我目前正在经历技术困难，我的AI服务暂时不可用。请稍后再试，如果问题持续存在，请联系技术支持。";
         }
     }
 }

@@ -1,8 +1,10 @@
 package com.ai.qa.service.api.controller;
 
 import com.ai.qa.service.api.dto.ChatRequest;
+import com.ai.qa.service.api.dto.QAHistoryDTO;
 import com.ai.qa.service.domain.service.QAService;
 import com.ai.qa.service.infrastructure.client.AIClientService;
+import com.ai.qa.service.infrastructure.feign.UserClient;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,7 @@ public class QAController {
 
     private final QAService qaService;
     private final AIClientService aiClientService;
+    private final UserClient userClient;
 
     @GetMapping("/test")
     public String testFeign() {
@@ -87,6 +90,19 @@ public class QAController {
                     logger.error("Error in chat: {}", e.getMessage(), e);
                     return Mono.just(ResponseEntity.internalServerError().body("服务暂时不可用，请稍后再试。"));
                 });
+    }
+
+    @GetMapping("/history/{userId}")
+    public ResponseEntity<List<QAHistoryDTO>> getQAHistory(@PathVariable("userId") Long userId) {
+        try {
+            logger.info("Getting QA history for user: {}", userId);
+            List<QAHistoryDTO> history = userClient.getQAHistory(userId);
+            logger.info("Successfully retrieved {} QA history records for user: {}", history.size(), userId);
+            return ResponseEntity.ok(history);
+        } catch (Exception e) {
+            logger.error("Error getting QA history for user: {}", userId, e);
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     // 修复原有的save方法（假设SaveHistoryRequest和qaHistoryService存在）

@@ -5,18 +5,17 @@ spring:
     name: qa-service
   cloud:
     nacos:
-      server-addr: 54.219.180.170:8848
+      server-addr: 3.101.113.38:8848
 logging:
   level:
     # 将你的FeignClient接口所在的包路径设置为DEBUG
     # 假设 UserClient 在 com.ai.qa.qaservice.feign 包下
     com.ai.qa.qaservice.feign: DEBUG
-gemini:
+ai:
+  mock:
+    enabled: false
+zhipu:
   api:
-    key: AIzaSyCd3KlzM6KvMBO5HaiUvpWeuDPcb9vCjx0
-    url: https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent
-deepseek:
-  api:
-    key: sk-aefb794808ad4b7a990a78c1314e7c89
-    url: https://api.deepseek.com/v1/chat/completions
-    model: deepseek-chat
+    key: 957700239263426d94dc7d714de6f915.lpBaIWM2TMqtx9Ui
+    url: https://open.bigmodel.cn/api/paas/v4/chat/completions
+    model: glm-4-flash

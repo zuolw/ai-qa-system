@@ -6,7 +6,6 @@ export default function ChatPage() {
       <div className="mx-auto px-4 py-8 max-w-5xl">
         <header className="mb-6">
           <h1 className="text-3xl md:text-4xl font-bold text-white">AI 聊天助手</h1>
-          <p className="text-white/60 mt-1">与 Gemini 驱动的智能助手进行自然对话</p>
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

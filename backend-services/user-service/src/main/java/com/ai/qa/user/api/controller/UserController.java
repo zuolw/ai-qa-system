@@ -2,9 +2,13 @@ package com.ai.qa.user.api.controller;
 
 import com.ai.qa.user.api.dto.AuthRequest;
 import com.ai.qa.user.api.dto.AuthResponse;
+import com.ai.qa.user.api.dto.QAHistoryDTO;
+import com.ai.qa.user.application.QAHistoryService;
 import com.ai.qa.user.application.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /***
  * 为什么user-service必须也要自己做安全限制？
@@ -24,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final QAHistoryService qaHistoryService;
 
     @PostMapping("/login")
     public AuthResponse login(@RequestBody AuthRequest request) {
@@ -39,5 +44,10 @@ public class UserController {
     public String getUserById(@PathVariable("userId") Long userId) {
         System.out.println("测试userid");
         return "userid:" + userId;
+    }
+
+    @GetMapping("/{userId}/qa-history")
+    public List<QAHistoryDTO> getQAHistory(@PathVariable("userId") Long userId) {
+        return qaHistoryService.getQAHistoryByUserId(userId);
     }
 }

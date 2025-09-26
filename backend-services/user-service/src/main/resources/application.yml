@@ -5,12 +5,13 @@ spring:
     name: user-service
   cloud:
     nacos:
-      server-addr: 54.219.180.170:8848
+      server-addr: 3.101.113.38:8848
   datasource:
-    # url: jdbc:mysql://54.219.180.170:3306/ai_qa_system?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    # url: jdbc:mysql://localhost:3306/ai_qa_system?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     url: jdbc:mysql://ai-qa-system-zuolw.cj6gcogsidzt.ap-southeast-2.rds.amazonaws.com/ai-qa-system-zuolw?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
     username: root
     password: zaq12wsx
+    # password: root
   jpa:
     hibernate:
       ddl-auto: update

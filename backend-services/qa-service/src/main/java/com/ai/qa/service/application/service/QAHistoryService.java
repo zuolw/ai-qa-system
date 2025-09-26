@@ -18,7 +18,7 @@ public class QAHistoryService {
     // private final QAHistoryRepo qaHistoryRepo;
 
     public QAHistoryDTO saveHistory(SaveHistoryCommand command) {
-        // 修复：createNew需要4个参数
+        // 修复：createNew需要4个参数，userId保持为String
         QAHistory history = QAHistory.createNew(
                 command.getUserId(),
                 command.getQuestion(),
@@ -41,12 +41,11 @@ public class QAHistoryService {
 
     private QAHistoryDTO toDto(QAHistory history) {
         QAHistoryDTO dto = new QAHistoryDTO();
-        dto.setId(history.getId());
-        dto.setUserId(history.getUserId());
+        dto.setId(Long.parseLong(history.getId()));
+        dto.setUserId(Long.parseLong(history.getUserId()));
         dto.setQuestion(history.getQuestion());
         dto.setAnswer(history.getAnswer());
-        dto.setTimestamp(history.getTimestamp());
-        dto.setSessionId(history.getSessionId());
+        dto.setCreateTime(history.getTimestamp());
         return dto;
     }
 

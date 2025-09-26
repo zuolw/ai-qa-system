@@ -1,4 +1,4 @@
-package com.ai.qa.service.api.dto;
+package com.ai.qa.user.api.dto;
 
 import lombok.Data;
 import java.time.LocalDateTime;

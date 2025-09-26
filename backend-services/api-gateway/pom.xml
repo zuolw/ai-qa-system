@@ -65,6 +65,11 @@
             <artifactId>nacos-client</artifactId>
             <!-- 版本号会从你的 dependencyManagement 中继承 -->
         </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
+            <version>2.2.0</version>
+        </dependency>
     </dependencies>
 
     <!-- 3. 添加构建插件，用于打包成可执行jar -->
